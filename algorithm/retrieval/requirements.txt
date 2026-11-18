@@ -1,0 +1,2 @@
+-r ../ingest_gateway/deploy/requirements.lock
+-r management/requirements.txt

@@ -1,0 +1,4 @@
+*.sh text eol=lf
+*.patch whitespace=-blank-at-eol,-blank-at-eof
+algorithm/retrieval/management/openapi.json text eol=lf
+algorithm/retrieval/image/patches/** -text whitespace=cr-at-eol

@@ -1,0 +1,5 @@
+*
+!Dockerfile
+!api_entry.py
+!patches/
+!patches/**

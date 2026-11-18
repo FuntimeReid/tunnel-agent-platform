@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>隧道知识库</title><link rel="stylesheet" href="/styles.css"></head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="/"><span>隧道知识库</span></a>
+  <button class="nav-item active" data-step="1"><span>▤</span>资料入库</button>
+  <button class="nav-item" data-step="4"><span>⌕</span>检索</button>
+  <div class="connection"><i id="healthDot"></i><span id="healthText">正在连接服务</span><button id="refreshHealth" title="重新检查连接" aria-label="重新检查连接">↻</button></div>
+</aside>
+<main>
+  <div class="page">
+    <div class="page-heading"><h1>资料入库与检索</h1><div class="page-actions"><button class="button secondary" id="exportRecords">导出记录</button></div></div>
+    <div class="stats"><div><span class="stat-label">当前知识库</span><strong id="statLibrary">尚未选择</strong></div><div><span class="stat-label">文档数</span><strong id="statTotal">—</strong></div><div><span class="stat-label">处理结束</span><strong id="statDone">—</strong></div><div><span class="stat-label">处理中</span><strong id="statPending">0</strong></div></div>
+    <nav class="stepper" aria-label="操作步骤">
+      <button data-step="1"><span class="step-number">01</span><strong>选择知识库</strong></button><b></b>
+      <button data-step="2"><span class="step-number">02</span><strong>上传资料</strong></button><b></b>
+      <button data-step="3"><span class="step-number">03</span><strong>查看进度</strong></button><b></b>
+      <button data-step="4"><span class="step-number">04</span><strong>检索</strong></button>
+    </nav>
+    <div id="message" role="status" class="message hidden"></div>
+    <div class="workspace">
+    <div class="workspace-main">
+      <section class="panel" data-panel="1">
+        <div class="panel-heading"><h2>知识库</h2><button class="text-button" id="reloadLibraries">↻ 刷新列表</button></div>
+        <div class="panel-body">
+        <div class="direction-select-row"><div class="field"><label for="directionSelect">方向</label><select id="directionSelect"><option value="">请选择方向</option></select></div><button id="addDirection" class="text-button" type="button">＋ 新建方向</button></div>
+        <form id="directionForm" class="direction-form hidden"><div class="field"><label for="directionName">方向名称</label><input id="directionName" maxlength="128" required></div><button class="button primary" id="createDirection" type="submit">创建</button><button class="button secondary" id="cancelDirection" type="button">取消</button></form>
+        <div class="library-tabs" role="tablist"><button id="existingLibraryTab" role="tab" aria-selected="true" aria-controls="existingLibraryPanel" class="active">选择已有知识库</button><button id="newLibraryTab" role="tab" aria-selected="false" aria-controls="newLibraryPanel">新建知识库</button></div>
+        <div id="existingLibraryPanel" role="tabpanel" aria-labelledby="existingLibraryTab">
+          <div class="library-select-row"><div class="field"><label for="librarySelect">知识库</label><select id="librarySelect"><option value="">正在读取知识库…</option></select></div><button id="viewDocuments" class="button secondary">查看文档</button></div>
+          <section id="libraryDocuments" class="hidden"><div class="document-heading"><h3>库内文档</h3><button id="refreshDocuments" class="text-button">↻ 刷新</button></div><dl id="libraryParameters" class="parameter-grid"></dl><div id="documentList"></div><div class="document-pages"><span id="documentPageInfo"></span><div><button id="previousDocuments" class="button secondary">上一页</button><button id="nextDocuments" class="button secondary">下一页</button></div></div></section>
+        </div>
+        <div id="newLibraryPanel" role="tabpanel" aria-labelledby="newLibraryTab" class="hidden"><form id="createForm"><div class="field"><label for="libraryName">知识库名称</label><input id="libraryName" maxlength="128" required></div><div class="field"><label for="libraryDescription">说明 <span class="optional">选填</span></label><textarea id="libraryDescription" maxlength="1024" rows="2"></textarea></div><button class="button primary" id="createButton" type="submit">＋ 新建知识库</button></form></div>
+        </div>
+        <div class="panel-footer panel-footer-end"><button class="button primary" id="toUpload">下一步 →</button></div>
+      </section>
+      <section class="panel hidden" data-panel="2">
+        <div class="panel-heading"><h2>上传资料</h2><span class="pill library-chip"></span></div>
+        <div class="panel-body">
+        <div class="field"><label for="category">资料类别</label><select id="category"><option value="general">其他 / 通用资料</option><option value="paper">论文</option><option value="patent">专利</option><option value="standard">标准、规范</option><option value="policy">政策、法规</option><option value="manual">手册、说明书</option></select></div>
+        <label class="dropzone" id="dropzone" for="files"><span class="upload-icon">↑</span><strong>选择或拖入文件</strong><span>PDF · DOCX · PPTX · XLSX · MD · TXT</span><small>单文件 ≤ 120 MiB</small><input type="file" id="files" multiple accept=".pdf,.docx,.pptx,.xlsx,.md,.markdown,.txt"></label>
+        <div id="selectedFiles" class="selected-files"></div>
+        <div id="uploadProgress" class="hidden"><div class="progress-title"><span>正在上传到服务器</span><span id="uploadPercent">0%</span></div><div class="progress-track"><div id="uploadBar"></div></div></div>
+        </div>
+        <div class="panel-footer"><button class="text-button" data-step="1">← 返回选库</button><button class="button primary" id="uploadButton">上传并开始处理 →</button></div>
+      </section>
+      <section class="panel hidden" data-panel="3">
+        <div class="panel-heading"><h2>处理进度</h2><button class="text-button" id="refreshRecords">↻ 刷新进度</button></div>
+        <div class="panel-body">
+        <div class="processing-overview"><div><i class="live-dot"></i><span id="processingSummary">正在读取处理记录</span></div><small id="lastUpdated"></small></div>
+        <div id="recordList"></div>
+        </div>
+        <div class="panel-footer"><button class="text-button" data-step="2">＋ 继续上传</button><button class="button primary" id="toRetrieval">下一步：检索 →</button></div>
+      </section>
+      <section class="panel hidden" data-panel="4">
+        <div class="panel-heading"><h2>检索</h2></div>
+        <div class="panel-body">
+        <div class="retrieval-library"><span>当前知识库</span><strong class="library-chip"></strong><span id="retrievalReady"></span></div>
+        <form id="retrievalForm"><div class="field"><label for="demoQuestion">问题</label><textarea id="demoQuestion" rows="3" maxlength="8000" required></textarea></div><div class="retrieval-controls"><div class="field"><label for="retrievalMode">检索方式</label><select id="retrievalMode"><option value="standard">普通检索 · Standard</option><option value="medium">Agentic RAG · Medium</option><option value="high">Agentic RAG · High</option></select></div><button type="submit" id="searchButton" class="button primary">检索</button></div></form>
+        <div id="retrievalSummary" class="retrieval-summary" role="status"></div>
+        <div id="retrievalResults"></div>
+        </div>
+        <div class="panel-footer"><button class="text-button" data-step="3">← 返回处理记录</button></div>
+      </section>
+    </div>
+    </div>
+  </div>
+</main>
+<script src="/app.js"></script>
+</body></html>

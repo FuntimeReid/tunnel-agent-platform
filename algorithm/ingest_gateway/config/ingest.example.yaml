@@ -1,0 +1,55 @@
+ragflow:
+  base_url: http://127.0.0.1:9380/api/v1
+  api_key_file: ../secrets/ragflow-key
+  account_file: ragflow-account.json
+mineru:
+  base_url: http://127.0.0.1:18886
+  timeout_seconds: 3600
+mysql:
+  host: 127.0.0.1
+  port: 13306
+  user: ingest_gateway
+  database: ingest_gateway
+  password_file: ../secrets/mysql-password
+storage:
+  staging_dir: ../data/staging
+  failed_staging_retention_days: 7
+limits:
+  max_file_bytes: 125829120
+  max_files_per_request: 10
+  max_status_ids: 100
+worker:
+  sync_interval_seconds: 10
+  transient_retry_delays_seconds:
+  - 30
+  - 60
+  - 120
+library_defaults:
+  chunk_method: naive
+  parser_config:
+    mineru_lang: ch
+    skip_chunk_image: true
+    chunk_token_num: 512
+    task_page_size: 1000
+categories:
+- paper
+- patent
+- standard
+- policy
+- manual
+- general
+chunk_method:
+  pdf:
+    paper: paper
+    standard: laws
+    policy: laws
+    manual: manual
+    patent: naive
+    general: naive
+  markdown:
+    paper: naive
+    standard: laws
+    policy: laws
+    manual: naive
+    patent: naive
+    general: naive

@@ -1,0 +1,11 @@
+{
+  "questions": [
+    {
+      "id": "DEMO-001",
+      "category": "示例",
+      "question": "虚构维护手册规定传感器 A 多久检查一次？",
+      "expected_behavior": "answer",
+      "reference_answer": "每月检查一次。"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+--- a/rag/svr/task_executor.py
++++ b/rag/svr/task_executor.py
+@@ -443,9 +443,13 @@
+                 docs.append(d)
+                 return
+ 
+-            if not d.get("image"):
++            # skip_chunk_image keeps page positions but stores no chunk screenshot;
++            # a figure-only chunk then has nothing left to index, so it is dropped.
++            if not d.get("image") or task["parser_config"].get("skip_chunk_image"):
+                 _ = d.pop("image", None)
+                 d["img_id"] = ""
++                if task["parser_config"].get("skip_chunk_image") and not chunk["content_with_weight"].strip():
++                    return
+                 docs.append(d)
+                 return
+             await image2id(d, partial(settings.STORAGE_IMPL.put, tenant_id=task["tenant_id"]), d["id"], task["kb_id"])
